@@ -1,0 +1,26 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: appointment-service
+  datasource:
+    url: jdbc:mysql://localhost:3306/db_taller_citas_in5am?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    username: IN5AM
+    password: "3#kPz"
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    open-in-view: false
+    show-sql: false
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+
+# Cliente HTTP sincrono hacia mechanic-service (RestClient)
+services:
+  mechanic:
+    base-url: http://localhost:8081
+    username: citas-service
+    password: citas123
