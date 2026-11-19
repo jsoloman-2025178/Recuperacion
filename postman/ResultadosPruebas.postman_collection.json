@@ -1,0 +1,64 @@
+{
+  "info": {
+    "_postman_id": "7f3a1c2e-9b44-4d18-a6f0-taller1234567",
+    "name": "Taller - Resultados Pruebas Unitarias",
+    "description": "Tabla MEC-01..APT-07. Enviar la tabla por POST y recibir los resultados con estado PASSED.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "basic",
+    "basic": [
+      { "key": "username", "value": "admin", "type": "string" },
+      { "key": "password", "value": "admin123", "type": "string" }
+    ]
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8082", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "POST - Ejecutar pruebas (tabla completa)",
+      "request": {
+        "method": "POST",
+        "header": [ { "key": "Content-Type", "value": "application/json" } ],
+        "body": {
+          "mode": "raw",
+          "raw": "[\n  {\"id\": \"MEC-01\", \"prueba\": \"createMechanic_ValidSchedule_ReturnsSavedMechanic\", \"microservicio\": \"mechanicservice\", \"escenarioEvaluado\": \"Registro de mecánico con jornada 08:00 a 17:00.\", \"resultadoEsperado\": \"PASSED — Retorna entidad con active = true y ejecuta save() 1 vez.\", \"estado\": \"\"},\n  {\"id\": \"MEC-02\", \"prueba\": \"createMechanic_InvalidSchedule_ThrowsException\", \"microservicio\": \"mechanicservice\", \"escenarioEvaluado\": \"Registro con workEndTime <= workStartTime.\", \"resultadoEsperado\": \"PASSED — Lanza BusinessValidationException y nunca llama a save().\", \"estado\": \"\"},\n  {\"id\": \"MEC-03\", \"prueba\": \"isAvailable_WithinWorkingHoursAndActive_ReturnsTrue\", \"microservicio\": \"mechanicservice\", \"escenarioEvaluado\": \"Consulta de disponibilidad dentro del turno y mecánico activo.\", \"resultadoEsperado\": \"PASSED — Retorna true.\", \"estado\": \"\"},\n  {\"id\": \"MEC-04\", \"prueba\": \"isAvailable_ExceedsWorkEndTime_ReturnsFalse\", \"microservicio\": \"mechanicservice\", \"escenarioEvaluado\": \"Cita que inicia a las 16:30 por 60 min (termina 17:30).\", \"resultadoEsperado\": \"PASSED — Retorna false por exceder work_end_time (17:00).\", \"estado\": \"\"},\n  {\"id\": \"MEC-05\", \"prueba\": \"isAvailable_InactiveMechanic_ReturnsFalse\", \"microservicio\": \"mechanicservice\", \"escenarioEvaluado\": \"Consulta de disponibilidad para mecánico con active = false.\", \"resultadoEsperado\": \"PASSED — Retorna false.\", \"estado\": \"\"},\n  {\"id\": \"MEC-06\", \"prueba\": \"getById_NonExistentId_ThrowsNotFound\", \"microservicio\": \"mechanicservice\", \"escenarioEvaluado\": \"Búsqueda por ID inexistente (99L).\", \"resultadoEsperado\": \"PASSED — Lanza ResourceNotFoundException.\", \"estado\": \"\"},\n  {\"id\": \"APT-01\", \"prueba\": \"createAppointment_ValidAndNoConflict_ReturnsCreatedAppointment\", \"microservicio\": \"appointmentservice\", \"escenarioEvaluado\": \"Creación de cita válida sin choques de horario.\", \"resultadoEsperado\": \"PASSED — Guarda cita con estado inicial PROGRAMADA.\", \"estado\": \"\"},\n  {\"id\": \"APT-02\", \"prueba\": \"createAppointment_OverlappingTime_ThrowsConflict\", \"microservicio\": \"appointmentservice\", \"escenarioEvaluado\": \"Cita de 09:30–10:30 existiendo otra de 09:00–10:00.\", \"resultadoEsperado\": \"PASSED — Lanza ScheduleConflictException y evita guardar en BD.\", \"estado\": \"\"},\n  {\"id\": \"APT-03\", \"prueba\": \"createAppointment_AdjacentTimeSlot_Succeeds\", \"microservicio\": \"appointmentservice\", \"escenarioEvaluado\": \"Cita contigua exacta (10:00) tras cita de 09:00–10:00.\", \"resultadoEsperado\": \"PASSED — Permite el registro sin falso positivo de choque.\", \"estado\": \"\"},\n  {\"id\": \"APT-04\", \"prueba\": \"createAppointment_InactiveMechanic_ThrowsValidationException\", \"microservicio\": \"appointmentservice\", \"escenarioEvaluado\": \"Creación de cita asignada a un mechanic_id inactivo.\", \"resultadoEsperado\": \"PASSED — Lanza BusinessValidationException antes de consultar citas.\", \"estado\": \"\"},\n  {\"id\": \"APT-05\", \"prueba\": \"createAppointment_OutsideMechanicHours_ThrowsValidationException\", \"microservicio\": \"appointmentservice\", \"escenarioEvaluado\": \"Cita que sobrepasa la hora de salida del mecánico (17:00).\", \"resultadoEsperado\": \"PASSED — Lanza BusinessValidationException.\", \"estado\": \"\"},\n  {\"id\": \"APT-06\", \"prueba\": \"updateStatus_ValidTransitions_UpdatesStatus\", \"microservicio\": \"appointmentservice\", \"escenarioEvaluado\": \"Flujo PROGRAMADA → EN_TALLER → COMPLETADA.\", \"resultadoEsperado\": \"PASSED — Actualiza el campo status en cada paso.\", \"estado\": \"\"},\n  {\"id\": \"APT-07\", \"prueba\": \"updateStatus_FromCancelledToProgramada_ThrowsValidationException\", \"microservicio\": \"appointmentservice\", \"escenarioEvaluado\": \"Intentar reactivar una cita CANCELADA a PROGRAMADA.\", \"resultadoEsperado\": \"PASSED — Lanza BusinessValidationException y bloquea el guardado.\", \"estado\": \"\"}\n]\n",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/test-results/execute",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "test-results", "execute"]
+        },
+        "description": "Envía la tabla de pruebas y devuelve los 13 resultados con estado PASSED."
+      }
+    },
+    {
+      "name": "GET - Ver todos los resultados",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/api/test-results",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "test-results"]
+        },
+        "description": "Devuelve el catálogo completo MEC-01..APT-07."
+      }
+    },
+    {
+      "name": "POST - Ejecutar sin cuerpo (devuelve los 13)",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": { "mode": "none" },
+        "url": {
+          "raw": "{{baseUrl}}/api/test-results/execute",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "test-results", "execute"]
+        },
+        "description": "Sin body, devuelve los 13 resultados con estado PASSED."
+      }
+    }
+  ]
+}
